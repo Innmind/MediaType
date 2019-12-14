@@ -81,12 +81,7 @@ final class MediaType
         $params = $splits
             ->drop(1)
             ->toSequenceOf(Parameter::class, static function(Str $param): \Generator {
-                $matches = $param->capture('~^(?<key>[\w\-.]+)=(?<value>[\w\-.]+)$~');
-
-                yield new Parameter(
-                    $matches->get('key')->toString(),
-                    $matches->get('value')->toString(),
-                );
+                yield Parameter::of($param->toString());
             });
 
         return new self(

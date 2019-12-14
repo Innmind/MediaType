@@ -21,6 +21,16 @@ final class Parameter
         $this->value = $value;
     }
 
+    public static function of(string $string): self
+    {
+        $matches = Str::of($string)->capture('~^(?<key>[\w\-.]+)=(?<value>[\w\-.]+)$~');
+
+        return new self(
+            $matches->get('key')->toString(),
+            $matches->get('value')->toString(),
+        );
+    }
+
     public function name(): string
     {
         return $this->name;
