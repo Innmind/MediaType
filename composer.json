@@ -1,0 +1,33 @@
+{
+    "name": "innmind/media-type",
+    "type": "library",
+    "description": "Model of media types",
+    "keywords": ["media type"],
+    "homepage": "http://github.com/Innmind/MediaType",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Baptiste Langlade",
+            "email": "langlade.baptiste@gmail.com"
+        }
+    ],
+    "support": {
+        "issues": "http://github.com/Innmind/MediaType/issues"
+    },
+    "require": {
+        "php": "~7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Innmind\\MediaType\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\Innmind\\MediaType\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~8.0"
+    }
+}
