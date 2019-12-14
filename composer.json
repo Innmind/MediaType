@@ -20,7 +20,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Innmind\\MediaType\\": "src/"
+            "Innmind\\MediaType\\": "src/",
+            "Fixtures\\Innmind\\MediaType\\": "fixtures/"
         }
     },
     "autoload-dev": {
@@ -32,5 +33,11 @@
         "phpunit/phpunit": "~8.0",
         "innmind/black-box": "^3.0",
         "vimeo/psalm": "^3.7"
+    },
+    "conflict": {
+        "innmind/black-box": "<3.0|~4.0"
+    },
+    "suggest": {
+        "innmind/black-box": "For property based testing"
     }
 }
