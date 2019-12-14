@@ -38,6 +38,12 @@ class MediaTypeTest extends TestCase
         $this->assertSame('application/json+whatever; charset=UTF-8', $mediaType->toString());
     }
 
+    public function testNull()
+    {
+        $this->assertInstanceOf(MediaType::class, MediaType::null());
+        $this->assertSame('application/octet-stream', MediaType::null()->toString());
+    }
+
     public function testStringCast()
     {
         $this->assertSame(

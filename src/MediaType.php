@@ -99,6 +99,11 @@ final class MediaType
         );
     }
 
+    public static function null(): self
+    {
+        return new self('application', 'octet-stream');
+    }
+
     public function topLevel(): string
     {
         return $this->topLevel;
