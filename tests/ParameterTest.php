@@ -21,7 +21,7 @@ class ParameterTest extends TestCase
     {
         $this
             ->forAll(
-                Set\Strings::any()->filter(fn($string) => $string !== ''),
+                Set\Strings::any()->filter(fn($name) => (bool) preg_match('~^[\w\-.]+$~', $name)),
                 Set\Strings::any(),
             )
             ->then(function($name, $value){
@@ -33,14 +33,18 @@ class ParameterTest extends TestCase
             });
     }
 
-    public function testThrowWhenNameEmpty()
+    public function testThrowWhenNameInvalid()
     {
         $this
-            ->forAll(Set\Strings::any())
-            ->then(function($value) {
+            ->forAll(
+                Set\Strings::any()->filter(fn($name) => !(bool) preg_match('~^[\w\-.]+$~', $name)),
+                Set\Strings::any(),
+            )
+            ->then(function($name, $value) {
                 $this->expectException(DomainException::class);
+                $this->expectExceptionMessage($name);
 
-                new Parameter('', $value);
+                new Parameter($name, $value);
             });
     }
 }

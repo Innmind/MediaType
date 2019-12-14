@@ -6,6 +6,7 @@ namespace Innmind\MediaType;
 use Innmind\MediaType\Exception\{
     InvalidTopLevelType,
     InvalidMediaTypeString,
+    DomainException,
 };
 use Innmind\Immutable\{
     Sequence,
@@ -35,6 +36,14 @@ final class MediaType
     ) {
         if (!self::topLevels()->contains($topLevel)) {
             throw new InvalidTopLevelType($topLevel);
+        }
+
+        if (!Str::of($subType)->matches('~^[\w\-.]+$~')) {
+            throw new DomainException($subType);
+        }
+
+        if ($suffix !== '' && !Str::of($suffix)->matches('~^[\w\-.]+$~')) {
+            throw new DomainException($suffix);
         }
 
         $this->topLevel = $topLevel;

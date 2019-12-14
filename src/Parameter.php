@@ -13,8 +13,8 @@ final class Parameter
 
     public function __construct(string $name, string $value)
     {
-        if (Str::of($name)->empty()) {
-            throw new DomainException;
+        if (!Str::of($name)->matches('~^[\w\-.]+$~')) {
+            throw new DomainException($name);
         }
 
         $this->name = $name;

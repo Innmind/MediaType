@@ -38,10 +38,10 @@ final class MediaType
                 );
             },
             Set\Elements::of(...unwrap(Model::topLevels())),
-            Set\Strings::any(),
-            Set\Strings::any(),
+            Set\Strings::any()->filter(fn($type) => (bool) preg_match('~^[\w\-.]+$~', $type)),
+            Set\Strings::any()->filter(fn($suffix) => $suffix === '' || (bool) preg_match('~^[\w\-.]+$~', $suffix)),
             new Set\Either(
-                Set\Strings::any(),
+                Set\Strings::any()->filter(fn($name) => (bool) preg_match('~^[\w\-.]+$~', $name)),
                 Set\Elements::of(null), // to generate a type without a parameter
             ),
             Set\Strings::any(),

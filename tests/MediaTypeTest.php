@@ -8,6 +8,7 @@ use Innmind\MediaType\{
     Parameter,
     Exception\InvalidTopLevelType,
     Exception\InvalidMediaTypeString,
+    Exception\DomainException,
 };
 use Innmind\Immutable\Sequence;
 use function Innmind\Immutable\unwrap;
@@ -98,6 +99,34 @@ class MediaTypeTest extends TestCase
                 $this->expectExceptionMessage($string);
 
                 MediaType::of($string);
+            });
+    }
+
+    public function testThrowWhenSubTypeInvalid()
+    {
+        $this
+            ->forAll(
+                Set\Strings::any()->filter(fn($type) => !(bool) preg_match('~^[\w\-.]+$~', $type))
+            )
+            ->then(function($type) {
+                $this->expectException(DomainException::class);
+                $this->expectExceptionMessage($type);
+
+                new MediaType('application', $type);
+            });
+    }
+
+    public function testThrowWhenSuffixInvalid()
+    {
+        $this
+            ->forAll(
+                Set\Strings::any()->filter(fn($suffix) => !(bool) preg_match('~^[\w\-.]+$~', $suffix))
+            )
+            ->then(function($suffix) {
+                $this->expectException(DomainException::class);
+                $this->expectExceptionMessage($suffix);
+
+                new MediaType('application', 'json', $suffix);
             });
     }
 }
