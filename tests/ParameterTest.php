@@ -21,7 +21,7 @@ class ParameterTest extends TestCase
     {
         $this
             ->forAll(
-                Set\Strings::any()->filter(fn($name) => (bool) preg_match('~^[\w\-.]+$~', $name)),
+                Set\Strings::any()->filter(fn($name) => (bool) preg_match('~^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$~', $name)),
                 Set\Strings::any(),
             )
             ->then(function($name, $value){

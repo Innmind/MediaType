@@ -20,6 +20,9 @@ use function Innmind\Immutable\{
 
 final class MediaType
 {
+    /** @see https://tools.ietf.org/html/rfc6838#section-4.2 */
+    private const FORMAT = '[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}';
+
     /** @var Set<string>|null */
     private static ?Set $topLevels = null;
     private string $topLevel;
@@ -38,11 +41,14 @@ final class MediaType
             throw new InvalidTopLevelType($topLevel);
         }
 
-        if (!Str::of($subType)->matches('~^[\w\-.]+$~')) {
+        $format = self::FORMAT;
+        $regex = "~^$format$~";
+
+        if (!Str::of($subType)->matches($regex)) {
             throw new DomainException($subType);
         }
 
-        if ($suffix !== '' && !Str::of($suffix)->matches('~^[\w\-.]+$~')) {
+        if ($suffix !== '' && !Str::of($suffix)->matches($regex)) {
             throw new DomainException($suffix);
         }
 
@@ -56,8 +62,9 @@ final class MediaType
     public static function of(string $string): self
     {
         $string = Str::of($string);
+        $format = self::FORMAT;
         $pattern = \sprintf(
-            '~%s/[\w\-.]+(\+\w+)?([;,] [\w\-.]+=[\w\-.]+)?~',
+            "~%s/$format(\+$format)?([;,] $format=[\w\-.]+)?~",
             join('|', self::topLevels())->toString(),
         );
 
@@ -69,7 +76,7 @@ final class MediaType
         $matches = $splits
             ->get(0)
             ->capture(\sprintf(
-                '~^(?<topLevel>%s)/(?<subType>[\w\-.]+)(\+(?<suffix>\w+))?$~',
+                "~^(?<topLevel>%s)/(?<subType>$format)(\+(?<suffix>$format))?$~",
                 join('|', self::topLevels())->toString(),
             ));
 

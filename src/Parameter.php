@@ -8,12 +8,17 @@ use Innmind\Immutable\Str;
 
 final class Parameter
 {
+    /** @see https://tools.ietf.org/html/rfc6838#section-4.2 */
+    private const FORMAT = '[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}';
+
     private string $name;
     private string $value;
 
     public function __construct(string $name, string $value)
     {
-        if (!Str::of($name)->matches('~^[\w\-.]+$~')) {
+        $format = self::FORMAT;
+
+        if (!Str::of($name)->matches("~^$format$~")) {
             throw new DomainException($name);
         }
 
@@ -23,7 +28,8 @@ final class Parameter
 
     public static function of(string $string): self
     {
-        $matches = Str::of($string)->capture('~^(?<key>[\w\-.]+)=(?<value>[\w\-.]+)$~');
+        $format = self::FORMAT;
+        $matches = Str::of($string)->capture("~^(?<key>$format)=(?<value>[\w\-.]+)$~");
 
         return new self(
             $matches->get('key')->toString(),
