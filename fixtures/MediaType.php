@@ -17,7 +17,7 @@ final class MediaType
      */
     public static function any(): Set
     {
-        return Set\Composite::of(
+        return Set\Composite::immutable(
             static function($topLevel, $subType, $suffix, $parameterName, $parameterValue): Model {
                 if ($parameterName) {
                     return new Model(
