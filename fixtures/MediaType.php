@@ -17,6 +17,16 @@ final class MediaType
      */
     public static function any(): Set
     {
+        $alphaNumerical = [...\range('A', 'Z'), ...\range('a', 'z'), ...\range(0, 9)];
+        $validChars = Set\Composite::immutable(
+            static fn($first, array $rest): string => \implode('', [$first, ...$rest]),
+            Set\Elements::of(...$alphaNumerical),
+            Set\Sequence::of(
+                Set\Elements::of('!', '#', '$', '&', '^', '_', '.', '-', ...$alphaNumerical),
+                Set\Integers::between(0, 126),
+            ),
+        );
+
         return Set\Composite::immutable(
             static function($topLevel, $subType, $suffix, $parameterName, $parameterValue): Model {
                 if ($parameterName) {
@@ -38,16 +48,22 @@ final class MediaType
                 );
             },
             Set\Elements::of(...unwrap(Model::topLevels())),
-            Set\Strings::matching('^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$'),
+            $validChars,
             new Set\Either(
                 Set\Elements::of(''),
-                Set\Strings::matching('^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$'),
+                $validChars,
             ),
             new Set\Either(
-                Set\Strings::matching('^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$'),
+                $validChars,
                 Set\Elements::of(null), // to generate a type without a parameter
             ),
-            Set\Strings::matching('^[ \-.]+$'),
+            Set\Decorate::immutable(
+                static fn(array $chars): string => \implode('', $chars),
+                Set\Sequence::of(
+                    Set\Chars::any()->filter(static fn(string $char): bool => !\in_array($char, [' ', '\\', '-', '.'])),
+                    Set\Integers::between(1, 100),
+                ),
+            ),
         );
     }
 }
