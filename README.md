@@ -1,9 +1,8 @@
 # MediaType
 
-| `develop` |
-|-----------|
-| [![codecov](https://codecov.io/gh/Innmind/MediaType/branch/develop/graph/badge.svg)](https://codecov.io/gh/Innmind/MediaType) |
-| [![Build Status](https://github.com/Innmind/MediaType/workflows/CI/badge.svg)](https://github.com/Innmind/MediaType/actions?query=workflow%3ACI) |
+[![Build Status](https://github.com/innmind/mediatype/workflows/CI/badge.svg?branch=master)](https://github.com/innmind/mediatype/actions?query=workflow%3ACI)
+[![codecov](https://codecov.io/gh/innmind/mediatype/branch/develop/graph/badge.svg)](https://codecov.io/gh/innmind/mediatype)
+[![Type Coverage](https://shepherd.dev/github/innmind/mediatype/coverage.svg)](https://shepherd.dev/github/innmind/mediatype)
 
 Model to validate media types (follows [RFC6838](https://tools.ietf.org/html/rfc6838)).
 

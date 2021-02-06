@@ -60,7 +60,7 @@ final class MediaType
             Set\Decorate::immutable(
                 static fn(array $chars): string => \implode('', $chars),
                 Set\Sequence::of(
-                    Set\Chars::any()->filter(static fn(string $char): bool => !\in_array($char, [' ', '\\', '-', '.'])),
+                    Set\Chars::any()->filter(static fn(string $char): bool => !\in_array($char, [' ', '\\', '-', '.'], true)),
                     Set\Integers::between(1, 100),
                 ),
             ),
