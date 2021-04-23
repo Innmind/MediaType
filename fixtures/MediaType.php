@@ -60,7 +60,7 @@ final class MediaType
             Set\Strings::madeOf(
                 Set\Chars::alphanumerical(),
                 Set\Elements::of('-', '.'),
-            ),
+            )->between(1, 100),
         );
     }
 }
