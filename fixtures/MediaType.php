@@ -57,12 +57,9 @@ final class MediaType
                 $validChars,
                 Set\Elements::of(null), // to generate a type without a parameter
             ),
-            Set\Decorate::immutable(
-                static fn(array $chars): string => \implode('', $chars),
-                Set\Sequence::of(
-                    Set\Chars::any()->filter(static fn(string $char): bool => !\in_array($char, [' ', '\\', '-', '.'], true)),
-                    Set\Integers::between(1, 100),
-                ),
+            Set\Strings::madeOf(
+                Set\Chars::alphanumerical(),
+                Set\Elements::of('-', '.'),
             ),
         );
     }
