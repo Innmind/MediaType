@@ -7,12 +7,15 @@ use Fixtures\Innmind\MediaType\MediaType;
 use Innmind\MediaType\MediaType as Model;
 use PHPUnit\Framework\TestCase;
 use Innmind\BlackBox\{
+    PHPUnit\BlackBox,
     Set,
     Random\RandomInt,
 };
 
 class MediaTypeTest extends TestCase
 {
+    use BlackBox;
+
     public function testInterface()
     {
         $set = MediaType::any();
@@ -24,5 +27,17 @@ class MediaTypeTest extends TestCase
             $this->assertTrue($value->isImmutable());
             $this->assertInstanceOf(Model::class, $value->unwrap());
         }
+    }
+
+    public function testAllGeneratedMediaTypesAreParseable()
+    {
+        $this
+            ->forAll(MediaType::any())
+            ->then(function($mediaType) {
+                $this->assertSame(
+                    $mediaType->toString(),
+                    Model::of($mediaType->toString())->toString(),
+                );
+            });
     }
 }

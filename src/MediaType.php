@@ -55,7 +55,6 @@ final class MediaType
         $this->topLevel = $topLevel;
         $this->subType = $subType;
         $this->suffix = $suffix;
-        /** @var Sequence<Parameter> */
         $this->parameters = Sequence::of(Parameter::class, ...$parameters);
     }
 
@@ -84,7 +83,6 @@ final class MediaType
         $subType = $matches->get('subType');
         $suffix = $matches->contains('suffix') ? $matches->get('suffix') : Str::of('');
 
-        /** @var Sequence<Parameter> $params */
         $params = $splits
             ->drop(1)
             ->toSequenceOf(Parameter::class, static function(Str $param): \Generator {
@@ -129,7 +127,6 @@ final class MediaType
 
     public function toString(): string
     {
-        /** @var Sequence<string> */
         $parameters = $this
             ->parameters
             ->toSequenceOf('string', static fn($parameter): \Generator => yield $parameter->toString());
