@@ -7,7 +7,6 @@ use Innmind\MediaType\{
     MediaType,
     Parameter,
     Exception\InvalidTopLevelType,
-    Exception\InvalidMediaTypeString,
     Exception\DomainException,
 };
 use Innmind\Immutable\Sequence;

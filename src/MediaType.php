@@ -5,7 +5,6 @@ namespace Innmind\MediaType;
 
 use Innmind\MediaType\Exception\{
     InvalidTopLevelType,
-    InvalidMediaTypeString,
     DomainException,
 };
 use Innmind\Immutable\{
