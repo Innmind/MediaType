@@ -36,7 +36,10 @@ class MediaTypeTest extends TestCase
             ->then(function($mediaType) {
                 $this->assertSame(
                     $mediaType->toString(),
-                    Model::of($mediaType->toString())->toString(),
+                    Model::of($mediaType->toString())->match(
+                        static fn($model) => $model->toString(),
+                        static fn() => null,
+                    ),
                 );
             });
     }

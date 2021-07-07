@@ -11,7 +11,6 @@ use Innmind\MediaType\{
     Exception\DomainException,
 };
 use Innmind\Immutable\Sequence;
-use function Innmind\Immutable\unwrap;
 use PHPUnit\Framework\TestCase;
 use Innmind\BlackBox\{
     PHPUnit\BlackBox,
@@ -31,7 +30,7 @@ class MediaTypeTest extends TestCase
             $parameter = new Parameter('charset', 'UTF-8'),
         );
 
-        $this->assertTrue($mediaType->parameters()->equals(Sequence::of(Parameter::class, $parameter)));
+        $this->assertTrue($mediaType->parameters()->equals(Sequence::of($parameter)));
         $this->assertSame('application', $mediaType->topLevel());
         $this->assertSame('json', $mediaType->subType());
         $this->assertSame('whatever', $mediaType->suffix());
@@ -74,6 +73,9 @@ class MediaTypeTest extends TestCase
     {
         $mediaType = MediaType::of(
             'application/tree.octet-stream+suffix;charset=UTF-8, another=param,me=too'
+        )->match(
+            static fn($value) => $value,
+            static fn() => null,
         );
 
         $this->assertInstanceOf(MediaType::class, $mediaType);
@@ -81,7 +83,7 @@ class MediaTypeTest extends TestCase
         $this->assertSame('tree.octet-stream', $mediaType->subType());
         $this->assertSame('suffix', $mediaType->suffix());
         $this->assertSame(3, $mediaType->parameters()->size());
-        $parameters = unwrap($mediaType->parameters());
+        $parameters = $mediaType->parameters()->toList();
         $this->assertSame('charset', $parameters[0]->name());
         $this->assertSame('UTF-8', $parameters[0]->value());
         $this->assertSame('another', $parameters[1]->name());
@@ -94,17 +96,19 @@ class MediaTypeTest extends TestCase
         );
     }
 
-    public function testThrowWhenInvalidMediaTypeString()
+    public function testReturnNothingWhenInvalidMediaTypeString()
     {
         $this
             ->forAll(Set\Strings::any())
             ->then(function($string) {
                 // this may optimistically generate a valid media type string at
                 // some point but generally any random string is invalid
-                $this->expectException(InvalidMediaTypeString::class);
-                $this->expectExceptionMessage($string);
-
-                MediaType::of($string);
+                $this->assertNull(
+                    MediaType::of($string)->match(
+                        static fn($value) => $value,
+                        static fn() => null,
+                    ),
+                );
             });
     }
 

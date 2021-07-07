@@ -4,7 +4,10 @@ declare(strict_types = 1);
 namespace Innmind\MediaType;
 
 use Innmind\MediaType\Exception\DomainException;
-use Innmind\Immutable\Str;
+use Innmind\Immutable\{
+    Str,
+    Maybe,
+};
 
 final class Parameter
 {
@@ -26,14 +29,19 @@ final class Parameter
         $this->value = $value;
     }
 
-    public static function of(string $string): self
+    /**
+     * @return Maybe<self>
+     */
+    public static function of(string $string): Maybe
     {
         $format = self::FORMAT;
         $matches = Str::of($string)->capture("~^(?<key>$format)=(?<value>[\w\-.]+)$~");
 
-        return new self(
-            $matches->get('key')->toString(),
-            $matches->get('value')->toString(),
+        return Maybe::all($matches->get('key'), $matches->get('value'))->map(
+            static fn(Str $key, Str $value) => new self(
+                $key->toString(),
+                $value->toString(),
+            ),
         );
     }
 
