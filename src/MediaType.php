@@ -193,7 +193,7 @@ final class MediaType
                 static fn($matches) => Maybe::all(
                     $matches->get('topLevel'),
                     $matches->get('subType'),
-                    $matches->get('suffix')->otherwise(fn() => Maybe::just(Str::of(''))),
+                    $matches->get('suffix')->otherwise(static fn() => Maybe::just(Str::of(''))),
                 ),
                 static fn() => Maybe::all(Maybe::nothing()),
             );
