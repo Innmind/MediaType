@@ -9,6 +9,9 @@ use Innmind\Immutable\{
     Maybe,
 };
 
+/**
+ * @psalm-immutable
+ */
 final class Parameter
 {
     /** @see https://tools.ietf.org/html/rfc6838#section-4.2 */

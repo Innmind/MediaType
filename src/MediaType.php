@@ -15,6 +15,9 @@ use Innmind\Immutable\{
 };
 use function Innmind\Immutable\join;
 
+/**
+ * @psalm-immutable
+ */
 final class MediaType
 {
     /** @see https://tools.ietf.org/html/rfc6838#section-4.2 */
