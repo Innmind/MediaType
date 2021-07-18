@@ -33,6 +33,8 @@ final class Parameter
     }
 
     /**
+     * @psalm-pure
+     *
      * @return Maybe<self>
      */
     public static function of(string $string): Maybe

@@ -60,6 +60,8 @@ final class MediaType
     }
 
     /**
+     * @psalm-pure
+     *
      * @return Maybe<self>
      */
     public static function of(string $string): Maybe
@@ -79,6 +81,9 @@ final class MediaType
             );
     }
 
+    /**
+     * @psalm-pure
+     */
     public static function null(): self
     {
         return new self('application', 'octet-stream');
