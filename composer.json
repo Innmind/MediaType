@@ -15,8 +15,8 @@
         "issues": "http://github.com/Innmind/MediaType/issues"
     },
     "require": {
-        "php": "~7.4|~8.0",
-        "innmind/immutable": "^3.0"
+        "php": "~8.0",
+        "innmind/immutable": "~4.0"
     },
     "autoload": {
         "psr-4": {
@@ -33,7 +33,7 @@
         "phpunit/phpunit": "~9.0",
         "innmind/black-box": "^4.17",
         "vimeo/psalm": "~4.1",
-        "innmind/coding-standard": "^1.1"
+        "innmind/coding-standard": "~2.0"
     },
     "conflict": {
         "innmind/black-box": "<4.1|~5.0"

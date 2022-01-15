@@ -8,7 +8,6 @@ use Innmind\MediaType\{
     Parameter,
 };
 use Innmind\BlackBox\Set;
-use function Innmind\Immutable\unwrap;
 
 final class MediaType
 {
@@ -47,7 +46,7 @@ final class MediaType
                     $suffix,
                 );
             },
-            Set\Elements::of(...unwrap(Model::topLevels())),
+            Set\Elements::of(...Model::topLevels()->toList()),
             $validChars,
             new Set\Either(
                 Set\Elements::of(''),
