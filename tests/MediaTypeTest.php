@@ -7,11 +7,9 @@ use Innmind\MediaType\{
     MediaType,
     Parameter,
     Exception\InvalidTopLevelType,
-    Exception\InvalidMediaTypeString,
     Exception\DomainException,
 };
 use Innmind\Immutable\Sequence;
-use function Innmind\Immutable\unwrap;
 use PHPUnit\Framework\TestCase;
 use Innmind\BlackBox\{
     PHPUnit\BlackBox,
@@ -31,7 +29,7 @@ class MediaTypeTest extends TestCase
             $parameter = new Parameter('charset', 'UTF-8'),
         );
 
-        $this->assertTrue($mediaType->parameters()->equals(Sequence::of(Parameter::class, $parameter)));
+        $this->assertTrue($mediaType->parameters()->equals(Sequence::of($parameter)));
         $this->assertSame('application', $mediaType->topLevel());
         $this->assertSame('json', $mediaType->subType());
         $this->assertSame('whatever', $mediaType->suffix());
@@ -51,7 +49,7 @@ class MediaTypeTest extends TestCase
             (new MediaType(
                 'application',
                 'json',
-            ))->toString()
+            ))->toString(),
         );
     }
 
@@ -70,10 +68,13 @@ class MediaTypeTest extends TestCase
             });
     }
 
-    public function testOf()
+    public function testMaybe()
     {
-        $mediaType = MediaType::of(
-            'application/tree.octet-stream+suffix;charset=UTF-8, another=param,me=too'
+        $mediaType = MediaType::maybe(
+            'application/tree.octet-stream+suffix;charset=UTF-8, another=param,me=too',
+        )->match(
+            static fn($value) => $value,
+            static fn() => null,
         );
 
         $this->assertInstanceOf(MediaType::class, $mediaType);
@@ -81,7 +82,7 @@ class MediaTypeTest extends TestCase
         $this->assertSame('tree.octet-stream', $mediaType->subType());
         $this->assertSame('suffix', $mediaType->suffix());
         $this->assertSame(3, $mediaType->parameters()->size());
-        $parameters = unwrap($mediaType->parameters());
+        $parameters = $mediaType->parameters()->toList();
         $this->assertSame('charset', $parameters[0]->name());
         $this->assertSame('UTF-8', $parameters[0]->value());
         $this->assertSame('another', $parameters[1]->name());
@@ -94,25 +95,37 @@ class MediaTypeTest extends TestCase
         );
     }
 
-    public function testThrowWhenInvalidMediaTypeString()
+    public function testReturnNothingWhenInvalidMediaTypeString()
     {
         $this
             ->forAll(Set\Strings::any())
             ->then(function($string) {
                 // this may optimistically generate a valid media type string at
                 // some point but generally any random string is invalid
-                $this->expectException(InvalidMediaTypeString::class);
-                $this->expectExceptionMessage($string);
-
-                MediaType::of($string);
+                $this->assertNull(
+                    MediaType::maybe($string)->match(
+                        static fn($value) => $value,
+                        static fn() => null,
+                    ),
+                );
             });
+    }
+
+    public function testReturnNothingWhenTopLevelInvalid()
+    {
+        $this->assertNull(
+            MediaType::maybe('unknown/json')->match(
+                static fn($value) => $value,
+                static fn() => null,
+            ),
+        );
     }
 
     public function testThrowWhenSubTypeInvalid()
     {
         $this
             ->forAll(
-                Set\Strings::any()->filter(fn($type) => !(bool) \preg_match('~^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$~', $type))
+                Set\Strings::any()->filter(static fn($type) => !(bool) \preg_match('~^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$~', $type)),
             )
             ->then(function($type) {
                 $this->expectException(DomainException::class);
@@ -126,7 +139,7 @@ class MediaTypeTest extends TestCase
     {
         $this
             ->forAll(
-                Set\Strings::any()->filter(fn($suffix) => !(bool) \preg_match('~^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$~', $suffix))
+                Set\Strings::any()->filter(static fn($suffix) => !(bool) \preg_match('~^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$~', $suffix)),
             )
             ->then(function($suffix) {
                 $this->expectException(DomainException::class);

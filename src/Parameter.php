@@ -4,8 +4,14 @@ declare(strict_types = 1);
 namespace Innmind\MediaType;
 
 use Innmind\MediaType\Exception\DomainException;
-use Innmind\Immutable\Str;
+use Innmind\Immutable\{
+    Str,
+    Maybe,
+};
 
+/**
+ * @psalm-immutable
+ */
 final class Parameter
 {
     /** @see https://tools.ietf.org/html/rfc6838#section-4.2 */
@@ -26,14 +32,21 @@ final class Parameter
         $this->value = $value;
     }
 
-    public static function of(string $string): self
+    /**
+     * @psalm-pure
+     *
+     * @return Maybe<self>
+     */
+    public static function of(string $string): Maybe
     {
         $format = self::FORMAT;
         $matches = Str::of($string)->capture("~^(?<key>$format)=(?<value>[\w\-.]+)$~");
 
-        return new self(
-            $matches->get('key')->toString(),
-            $matches->get('value')->toString(),
+        return Maybe::all($matches->get('key'), $matches->get('value'))->map(
+            static fn(Str $key, Str $value) => new self(
+                $key->toString(),
+                $value->toString(),
+            ),
         );
     }
 
