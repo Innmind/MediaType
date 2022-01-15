@@ -111,6 +111,16 @@ class MediaTypeTest extends TestCase
             });
     }
 
+    public function testReturnNothingWhenTopLevelInvalid()
+    {
+        $this->assertNull(
+            MediaType::maybe('unknown/json')->match(
+                static fn($value) => $value,
+                static fn() => null,
+            ),
+        );
+    }
+
     public function testThrowWhenSubTypeInvalid()
     {
         $this
