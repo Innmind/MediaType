@@ -115,7 +115,7 @@ class MediaTypeTest extends TestCase
     {
         $this
             ->forAll(
-                Set\Strings::any()->filter(fn($type) => !(bool) \preg_match('~^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$~', $type)),
+                Set\Strings::any()->filter(static fn($type) => !(bool) \preg_match('~^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$~', $type)),
             )
             ->then(function($type) {
                 $this->expectException(DomainException::class);
@@ -129,7 +129,7 @@ class MediaTypeTest extends TestCase
     {
         $this
             ->forAll(
-                Set\Strings::any()->filter(fn($suffix) => !(bool) \preg_match('~^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$~', $suffix)),
+                Set\Strings::any()->filter(static fn($suffix) => !(bool) \preg_match('~^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$~', $suffix)),
             )
             ->then(function($suffix) {
                 $this->expectException(DomainException::class);
