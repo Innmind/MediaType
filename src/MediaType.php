@@ -13,7 +13,6 @@ use Innmind\Immutable\{
     Str,
     Maybe,
 };
-use function Innmind\Immutable\join;
 
 /**
  * @psalm-immutable
@@ -117,14 +116,14 @@ final class MediaType
         $parameters = $this
             ->parameters
             ->map(static fn($parameter) => $parameter->toString());
-        $parameters = join(', ', $parameters);
+        $parameters = Str::of(', ')->join($parameters);
 
         return \sprintf(
             '%s/%s%s%s',
             $this->topLevel,
             $this->subType,
             $this->suffix !== '' ? '+'.$this->suffix : '',
-            $parameters->length() > 0 ? '; '.$parameters->toString() : ''
+            !$parameters->empty() ? '; '.$parameters->toString() : ''
         );
     }
 
@@ -155,7 +154,7 @@ final class MediaType
 
         return \sprintf(
             "~%s/$format(\+$format)?([;,] $format=[\w\-.]+)?~",
-            join('|', self::topLevels())->toString(),
+            Str::of('|')->join(self::topLevels())->toString(),
         );
     }
 
@@ -195,7 +194,7 @@ final class MediaType
         return $string
             ->map(static fn($string) => $string->capture(\sprintf(
                 "~^(?<topLevel>%s)/(?<subType>$format)(\+(?<suffix>$format))?$~",
-                join('|', self::topLevels())->toString(),
+                Str::of('|')->join(self::topLevels())->toString(),
             )))
             ->match(
                 static fn($matches) => Maybe::all(
