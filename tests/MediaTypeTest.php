@@ -49,7 +49,7 @@ class MediaTypeTest extends TestCase
             (new MediaType(
                 'application',
                 'json',
-            ))->toString()
+            ))->toString(),
         );
     }
 
@@ -71,7 +71,7 @@ class MediaTypeTest extends TestCase
     public function testOf()
     {
         $mediaType = MediaType::of(
-            'application/tree.octet-stream+suffix;charset=UTF-8, another=param,me=too'
+            'application/tree.octet-stream+suffix;charset=UTF-8, another=param,me=too',
         )->match(
             static fn($value) => $value,
             static fn() => null,
@@ -115,7 +115,7 @@ class MediaTypeTest extends TestCase
     {
         $this
             ->forAll(
-                Set\Strings::any()->filter(fn($type) => !(bool) \preg_match('~^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$~', $type))
+                Set\Strings::any()->filter(fn($type) => !(bool) \preg_match('~^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$~', $type)),
             )
             ->then(function($type) {
                 $this->expectException(DomainException::class);
@@ -129,7 +129,7 @@ class MediaTypeTest extends TestCase
     {
         $this
             ->forAll(
-                Set\Strings::any()->filter(fn($suffix) => !(bool) \preg_match('~^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$~', $suffix))
+                Set\Strings::any()->filter(fn($suffix) => !(bool) \preg_match('~^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$~', $suffix)),
             )
             ->then(function($suffix) {
                 $this->expectException(DomainException::class);

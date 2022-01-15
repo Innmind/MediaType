@@ -35,7 +35,7 @@ final class MediaType
         string $topLevel,
         string $subType,
         string $suffix = '',
-        Parameter ...$parameters
+        Parameter ...$parameters,
     ) {
         if (!self::topLevels()->contains($topLevel)) {
             throw new InvalidTopLevelType($topLevel);
@@ -123,7 +123,7 @@ final class MediaType
             $this->topLevel,
             $this->subType,
             $this->suffix !== '' ? '+'.$this->suffix : '',
-            !$parameters->empty() ? '; '.$parameters->toString() : ''
+            !$parameters->empty() ? '; '.$parameters->toString() : '',
         );
     }
 
@@ -167,7 +167,7 @@ final class MediaType
         string $topLevel,
         string $subType,
         string $suffix,
-        Sequence $parameters
+        Sequence $parameters,
     ): Maybe {
         if ($parameters->empty()) {
             return Maybe::just(new self($topLevel, $subType, $suffix));
