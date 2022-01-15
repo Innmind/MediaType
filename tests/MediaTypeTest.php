@@ -68,9 +68,9 @@ class MediaTypeTest extends TestCase
             });
     }
 
-    public function testOf()
+    public function testMaybe()
     {
-        $mediaType = MediaType::of(
+        $mediaType = MediaType::maybe(
             'application/tree.octet-stream+suffix;charset=UTF-8, another=param,me=too',
         )->match(
             static fn($value) => $value,
@@ -103,7 +103,7 @@ class MediaTypeTest extends TestCase
                 // this may optimistically generate a valid media type string at
                 // some point but generally any random string is invalid
                 $this->assertNull(
-                    MediaType::of($string)->match(
+                    MediaType::maybe($string)->match(
                         static fn($value) => $value,
                         static fn() => null,
                     ),

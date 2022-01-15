@@ -60,10 +60,22 @@ final class MediaType
 
     /**
      * @psalm-pure
+     * @throws DomainException
+     */
+    public static function of(string $string): self
+    {
+        return self::maybe($string)->match(
+            static fn($self) => $self,
+            static fn() => throw new DomainException($string),
+        );
+    }
+
+    /**
+     * @psalm-pure
      *
      * @return Maybe<self>
      */
-    public static function of(string $string): Maybe
+    public static function maybe(string $string): Maybe
     {
         return Maybe::just(Str::of($string))
             ->filter(static fn($string) => $string->matches(self::pattern()))
