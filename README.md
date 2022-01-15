@@ -26,4 +26,4 @@ $type->parameters()->first()->value(); // utf-8
 $type->toString(); // application/json+some-extension; charset=utf-8
 ```
 
-If the values are incorrect it will throw an exception.
+If the values are incorrect it will throw an exception. Or you can use `MediaType::maybe()` that will return an instance of `Innmind\Immutable\Maybe`.
