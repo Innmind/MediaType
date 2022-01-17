@@ -63,7 +63,7 @@ final class MediaType
         $string = Str::of($string);
         $format = self::FORMAT;
         $pattern = \sprintf(
-            "~%s/$format(\+$format)?([;,] $format=[\w\-.]+)?~",
+            "~^(%s)/$format(\+$format)?([;,] ?$format=[\w\-.]+)*\$~",
             join('|', self::topLevels())->toString(),
         );
 

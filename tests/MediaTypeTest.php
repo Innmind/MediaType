@@ -97,7 +97,10 @@ class MediaTypeTest extends TestCase
     public function testThrowWhenInvalidMediaTypeString()
     {
         $this
-            ->forAll(Set\Strings::any())
+            ->forAll(new Set\Either(
+                Set\Strings::any(),
+                Set\Elements::of('application/vnd.openxmlformats-officedocument.wordprocessingml.documentapplication/vnd.openxmlformats-officedocument.wordprocessingml.document'),
+            ))
             ->then(function($string) {
                 // this may optimistically generate a valid media type string at
                 // some point but generally any random string is invalid
