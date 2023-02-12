@@ -15,14 +15,16 @@ use Innmind\Immutable\{
 final class Parameter
 {
     /** @see https://tools.ietf.org/html/rfc6838#section-4.2 */
-    private const FORMAT = '[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}';
+    private const NAME = '[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}';
+    /** @see https://datatracker.ietf.org/doc/html/rfc9110#section-5.6.2 */
+    private const VALUE = '[A-Za-z0-9!#$%&\'*+^_.\-`|\~]';
 
     private string $name;
     private string $value;
 
     public function __construct(string $name, string $value)
     {
-        $format = self::FORMAT;
+        $format = self::NAME;
 
         if (!Str::of($name)->matches("~^$format$~")) {
             throw new DomainException($name);
@@ -39,14 +41,12 @@ final class Parameter
      */
     public static function of(string $string): Maybe
     {
-        $format = self::FORMAT;
-        $matches = Str::of($string)->capture("~^(?<key>$format)=(?<value>[\w\-.]+)$~");
+        $name = self::NAME;
+        $value = self::VALUE;
+        $string = Str::of($string);
 
-        return Maybe::all($matches->get('key'), $matches->get('value'))->map(
-            static fn(Str $key, Str $value) => new self(
-                $key->toString(),
-                $value->toString(),
-            ),
+        return self::capture($string, "~^(?<key>$name)=(?<value>$value+)$~")->otherwise(
+            static fn() => self::capture($string, "~^(?<key>$name)=\"(?<value>$value*)\"$~"),
         );
     }
 
@@ -66,6 +66,23 @@ final class Parameter
             '%s=%s',
             $this->name,
             $this->value,
+        );
+    }
+
+    /**
+     * @psalm-pure
+     *
+     * @return Maybe<self>
+     */
+    private static function capture(Str $string, string $format): Maybe
+    {
+        $matches = $string->capture($format);
+
+        return Maybe::all($matches->get('key'), $matches->get('value'))->map(
+            static fn(Str $key, Str $value) => new self(
+                $key->toString(),
+                $value->toString(),
+            ),
         );
     }
 }

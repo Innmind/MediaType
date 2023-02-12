@@ -95,6 +95,24 @@ class MediaTypeTest extends TestCase
         );
     }
 
+    public function testMaybeParametersInDoubleQuotes()
+    {
+        $mediaType = MediaType::maybe(
+            'application/octet-stream;charset="UTF-8"',
+        )->match(
+            static fn($value) => $value,
+            static fn() => null,
+        );
+
+        $this->assertInstanceOf(MediaType::class, $mediaType);
+        $this->assertSame('application', $mediaType->topLevel());
+        $this->assertSame('octet-stream', $mediaType->subType());
+        $this->assertSame(1, $mediaType->parameters()->size());
+        $parameters = $mediaType->parameters()->toList();
+        $this->assertSame('charset', $parameters[0]->name());
+        $this->assertSame('UTF-8', $parameters[0]->value());
+    }
+
     public function testReturnNothingWhenInvalidMediaTypeString()
     {
         $this
