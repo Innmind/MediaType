@@ -223,10 +223,11 @@ final class MediaType
      */
     private static function captureParameters(Sequence $parameters): Maybe\Comprehension
     {
-        return Maybe::all(
-            ...$parameters
-                ->map(static fn($parameter) => Parameter::of($parameter->toString()))
-                ->toList(),
-        );
+        return $parameters
+            ->map(static fn($parameter) => Parameter::of($parameter->toString()))
+            ->match(
+                static fn($first, $rest) => Maybe::all($first, ...$rest->toList()),
+                static fn() => Maybe::all(Maybe::nothing()),
+            );
     }
 }

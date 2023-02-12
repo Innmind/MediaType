@@ -47,4 +47,37 @@ class ParameterTest extends TestCase
                 new Parameter($name, $value);
             });
     }
+
+    public function testAcceptValueContainedInDoubleQuotes()
+    {
+        $this
+            ->forAll(
+                Set\Composite::immutable(
+                    static fn($first, $rest) => $first.$rest,
+                    Set\Chars::alphanumerical(),
+                    Set\Strings::madeOf(
+                        Set\Chars::alphanumerical(),
+                        Set\Elements::of('!', '#', '$', '&', '^', '_', '.', '-'),
+                    )->between(0, 125),
+                ),
+                Set\Strings::madeOf(
+                    Set\Chars::alphanumerical(),
+                    Set\Elements::of('!', '#', '$', '&', '^', '_', '.', '-', "'", '*', '+', '`', '|', '~'),
+                ),
+            )
+            ->then(function($name, $value) {
+                $parameter = Parameter::of(\sprintf(
+                    '%s="%s"',
+                    $name,
+                    $value,
+                ))->match(
+                    static fn($parameter) => $parameter,
+                    static fn() => null,
+                );
+
+                $this->assertInstanceOf(Parameter::class, $parameter);
+                $this->assertSame($name, $parameter->name());
+                $this->assertSame($value, $parameter->value());
+            });
+    }
 }
