@@ -52,10 +52,17 @@ class ParameterTest extends TestCase
     {
         $this
             ->forAll(
-                Set\Strings::any()->filter(static fn($name) => (bool) \preg_match('~^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$~', $name)),
+                Set\Composite::immutable(
+                    static fn($first, $rest) => $first.$rest,
+                    Set\Chars::alphanumerical(),
+                    Set\Strings::madeOf(
+                        Set\Chars::alphanumerical(),
+                        Set\Elements::of('!', '#', '$', '&', '^', '_', '.', '-'),
+                    )->between(0, 125),
+                ),
                 Set\Strings::madeOf(
                     Set\Chars::alphanumerical(),
-                    Set\Elements::of('!', '#', '$', '&', '^', '_', '.', '-'),
+                    Set\Elements::of('!', '#', '$', '&', '^', '_', '.', '-', "'", '*', '+', '`', '|', '~'),
                 ),
             )
             ->then(function($name, $value) {
