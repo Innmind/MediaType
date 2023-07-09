@@ -157,13 +157,15 @@ class MediaTypeTest extends TestCase
     {
         $this
             ->forAll(
-                Set\Strings::any()->filter(static fn($suffix) => !(bool) \preg_match('~^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$~', $suffix)),
+                Set\Strings::atLeast(1)->filter(static fn($suffix) => !(bool) \preg_match('~^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$~', $suffix)),
             )
             ->then(function($suffix) {
-                $this->expectException(DomainException::class);
-                $this->expectExceptionMessage($suffix);
-
-                new MediaType('application', 'json', $suffix);
+                try {
+                    new MediaType('application', 'json', $suffix);
+                    $this->fail('it should throw');
+                } catch (DomainException $e) {
+                    $this->assertSame($suffix, $e->getMessage());
+                }
             });
     }
 }

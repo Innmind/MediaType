@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Innmind\BlackBox\{
     PHPUnit\BlackBox,
     Set,
-    Random\RandomInt,
+    Random,
 };
 
 class MediaTypeTest extends TestCase
@@ -22,7 +22,7 @@ class MediaTypeTest extends TestCase
 
         $this->assertInstanceOf(Set::class, $set);
 
-        foreach ($set->values(new RandomInt) as $value) {
+        foreach ($set->values(Random::default) as $value) {
             $this->assertInstanceOf(Set\Value::class, $value);
             $this->assertTrue($value->isImmutable());
             $this->assertInstanceOf(Model::class, $value->unwrap());
