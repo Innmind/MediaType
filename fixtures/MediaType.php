@@ -48,11 +48,11 @@ final class MediaType
             },
             Set\Elements::of(...Model::topLevels()->toList()),
             $validChars,
-            new Set\Either(
+            Set\Either::any(
                 Set\Elements::of(''),
                 $validChars,
             ),
-            new Set\Either(
+            Set\Either::any(
                 $validChars,
                 Set\Elements::of(null), // to generate a type without a parameter
             ),
