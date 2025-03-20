@@ -24,7 +24,13 @@ class MediaTypeTest extends TestCase
 
         foreach ($set->values(Random::default) as $value) {
             $this->assertInstanceOf(Set\Value::class, $value);
-            $this->assertTrue($value->isImmutable());
+
+            if (\interface_exists(Set\Implementation::class)) {
+                $this->assertTrue($value->immutable());
+            } else {
+                $this->assertTrue($value->isImmutable());
+            }
+
             $this->assertInstanceOf(Model::class, $value->unwrap());
         }
     }
