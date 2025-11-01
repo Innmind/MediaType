@@ -30,8 +30,8 @@
         }
     },
     "require-dev": {
+        "innmind/static-analysis": "^1.2.1",
         "innmind/black-box": "~6.5",
-        "vimeo/psalm": "~5.6|dev-master",
         "innmind/coding-standard": "~2.0"
     },
     "conflict": {
