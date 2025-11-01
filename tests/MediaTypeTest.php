@@ -6,7 +6,7 @@ namespace Tests\Innmind\MediaType;
 use Innmind\MediaType\{
     MediaType,
     Parameter,
-    Exception\InvalidTopLevelType,
+    TopLevel,
     Exception\DomainException,
 };
 use Innmind\Immutable\Sequence;
@@ -23,14 +23,14 @@ class MediaTypeTest extends TestCase
     public function testInterface()
     {
         $mediaType = MediaType::from(
-            'application',
+            TopLevel::application,
             'json',
             'whatever',
             $parameter = Parameter::from('charset', 'UTF-8'),
         );
 
         $this->assertTrue($mediaType->parameters()->equals(Sequence::of($parameter)));
-        $this->assertSame('application', $mediaType->topLevel());
+        $this->assertSame(TopLevel::application, $mediaType->topLevel());
         $this->assertSame('json', $mediaType->subType());
         $this->assertSame('whatever', $mediaType->suffix());
         $this->assertSame('application/json+whatever; charset=UTF-8', $mediaType->toString());
@@ -47,25 +47,10 @@ class MediaTypeTest extends TestCase
         $this->assertSame(
             'application/json',
             MediaType::from(
-                'application',
+                TopLevel::application,
                 'json',
             )->toString(),
         );
-    }
-
-    public function testThrowWhenTheTopLevelIsInvalid(): BlackBox\Proof
-    {
-        return $this
-            ->forAll(
-                Set::strings()->exclude(static fn($string) => MediaType::topLevels()->contains($string)),
-                Set::strings(),
-            )
-            ->prove(function($topLevel, $subType) {
-                $this->expectException(InvalidTopLevelType::class);
-                $this->expectExceptionMessage($topLevel);
-
-                MediaType::from($topLevel, $subType);
-            });
     }
 
     public function testMaybe()
@@ -78,7 +63,7 @@ class MediaTypeTest extends TestCase
         );
 
         $this->assertInstanceOf(MediaType::class, $mediaType);
-        $this->assertSame('application', $mediaType->topLevel());
+        $this->assertSame(TopLevel::application, $mediaType->topLevel());
         $this->assertSame('tree.octet-stream', $mediaType->subType());
         $this->assertSame('suffix', $mediaType->suffix());
         $this->assertSame(3, $mediaType->parameters()->size());
@@ -105,7 +90,7 @@ class MediaTypeTest extends TestCase
         );
 
         $this->assertInstanceOf(MediaType::class, $mediaType);
-        $this->assertSame('application', $mediaType->topLevel());
+        $this->assertSame(TopLevel::application, $mediaType->topLevel());
         $this->assertSame('octet-stream', $mediaType->subType());
         $this->assertSame(1, $mediaType->parameters()->size());
         $parameters = $mediaType->parameters()->toList();
@@ -149,7 +134,7 @@ class MediaTypeTest extends TestCase
                 $this->expectException(DomainException::class);
                 $this->expectExceptionMessage($type);
 
-                MediaType::from('application', $type);
+                MediaType::from(TopLevel::application, $type);
             });
     }
 
@@ -163,7 +148,7 @@ class MediaTypeTest extends TestCase
             )
             ->prove(function($suffix) {
                 try {
-                    MediaType::from('application', 'json', $suffix);
+                    MediaType::from(TopLevel::application, 'json', $suffix);
                     $this->fail('it should throw');
                 } catch (DomainException $e) {
                     $this->assertSame($suffix, $e->getMessage());

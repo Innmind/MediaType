@@ -11,6 +11,11 @@
 - Require PHP `8.4`
 - `Innmind\MediaType\MediaType` constructor is now private, use `::from()` instead
 - `Innmind\MediaType\Parameter` constructor is now private, use `::from()` instead
+- `Innmind\MediaType\MediaType` top level is now represented by `Innmind\MediaType\TopLevel`
+
+### Removed
+
+- `Innmind\MediaType\Exception\InvalidTopLevelType`
 
 ## 2.2.0 - 2023-09-16
 

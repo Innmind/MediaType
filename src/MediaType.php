@@ -4,13 +4,11 @@ declare(strict_types = 1);
 namespace Innmind\MediaType;
 
 use Innmind\MediaType\Exception\{
-    InvalidTopLevelType,
     DomainException,
 };
 use Innmind\Immutable\{
     Attempt,
     Sequence,
-    Set,
     Str,
     Maybe,
 };
@@ -23,7 +21,7 @@ final class MediaType
     /** @see https://tools.ietf.org/html/rfc6838#section-4.2 */
     private const FORMAT = '[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}';
 
-    private string $topLevel;
+    private TopLevel $topLevel;
     private string $subType;
     private string $suffix;
     /** @var Sequence<Parameter> */
@@ -33,15 +31,11 @@ final class MediaType
      * @no-named-arguments
      */
     private function __construct(
-        string $topLevel,
+        TopLevel $topLevel,
         string $subType,
         string $suffix = '',
         Parameter ...$parameters,
     ) {
-        if (!self::topLevels()->contains($topLevel)) {
-            throw new InvalidTopLevelType($topLevel);
-        }
-
         $format = self::FORMAT;
         $regex = "~^$format$~";
 
@@ -64,7 +58,7 @@ final class MediaType
      * @no-named-arguments
      */
     public static function from(
-        string $topLevel,
+        TopLevel $topLevel,
         string $subType,
         string $suffix = '',
         Parameter ...$parameters,
@@ -93,8 +87,8 @@ final class MediaType
             ->map(static fn($string) => $string->pregSplit('~[;,] ?~'))
             ->flatMap(
                 static fn($splits) => self::capture($splits->first())->flatMap(
-                    static fn(Str $topLevel, Str $subType, Str $suffix) => self::build(
-                        $topLevel->toString(),
+                    static fn(TopLevel $topLevel, Str $subType, Str $suffix) => self::build(
+                        $topLevel,
                         $subType->toString(),
                         $suffix->toString(),
                         $splits->drop(1),
@@ -120,10 +114,10 @@ final class MediaType
      */
     public static function null(): self
     {
-        return new self('application', 'octet-stream');
+        return new self(TopLevel::application, 'octet-stream');
     }
 
-    public function topLevel(): string
+    public function topLevel(): TopLevel
     {
         return $this->topLevel;
     }
@@ -155,31 +149,10 @@ final class MediaType
 
         return \sprintf(
             '%s/%s%s%s',
-            $this->topLevel,
+            $this->topLevel->name,
             $this->subType,
             $this->suffix !== '' ? '+'.$this->suffix : '',
             !$parameters->empty() ? '; '.$parameters->toString() : '',
-        );
-    }
-
-    /**
-     * List of allowed top levels
-     *
-     * @return Set<string>
-     */
-    public static function topLevels(): Set
-    {
-        return Set::strings(
-            'application',
-            'audio',
-            'font',
-            'example',
-            'image',
-            'message',
-            'model',
-            'multipart',
-            'text',
-            'video',
         );
     }
 
@@ -189,7 +162,12 @@ final class MediaType
 
         return \sprintf(
             "~%s/$format(\+$format)?([;,] $format=[\w\-.]+)?~",
-            Str::of('|')->join(self::topLevels())->toString(),
+            Str::of('|')
+                ->join(
+                    Sequence::of(...TopLevel::cases())
+                        ->map(static fn($level) => $level->name),
+                )
+                ->toString(),
         );
     }
 
@@ -199,7 +177,7 @@ final class MediaType
      * @return Maybe<self>
      */
     private static function build(
-        string $topLevel,
+        TopLevel $topLevel,
         string $subType,
         string $suffix,
         Sequence $parameters,
@@ -229,11 +207,19 @@ final class MediaType
         return $string
             ->map(static fn($string) => $string->capture(\sprintf(
                 "~^(?<topLevel>%s)/(?<subType>$format)(\+(?<suffix>$format))?$~",
-                Str::of('|')->join(self::topLevels())->toString(),
+                Str::of('|')
+                    ->join(
+                        Sequence::of(...TopLevel::cases())
+                            ->map(static fn($level) => $level->name),
+                    )
+                    ->toString(),
             )))
             ->match(
                 static fn($matches) => Maybe::all(
-                    $matches->get('topLevel'),
+                    $matches
+                        ->get('topLevel')
+                        ->map(static fn($level) => $level->toString())
+                        ->flatMap(TopLevel::maybe(...)),
                     $matches->get('subType'),
                     $matches->get('suffix')->otherwise(static fn() => Maybe::just(Str::of(''))),
                 ),

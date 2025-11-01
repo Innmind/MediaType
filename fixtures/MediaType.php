@@ -6,6 +6,7 @@ namespace Fixtures\Innmind\MediaType;
 use Innmind\MediaType\{
     MediaType as Model,
     Parameter,
+    TopLevel,
 };
 use Innmind\BlackBox\Set;
 
@@ -45,7 +46,7 @@ final class MediaType
                     $suffix,
                 );
             },
-            Set::of(...Model::topLevels()->toList()),
+            Set::of(...TopLevel::cases()),
             $validChars,
             Set::either(
                 Set::of(''),
