@@ -22,7 +22,7 @@ class MediaTypeTest extends TestCase
 
     public function testInterface()
     {
-        $mediaType = new MediaType(
+        $mediaType = MediaType::from(
             'application',
             'json',
             'whatever',
@@ -46,10 +46,10 @@ class MediaTypeTest extends TestCase
     {
         $this->assertSame(
             'application/json',
-            (new MediaType(
+            MediaType::from(
                 'application',
                 'json',
-            ))->toString(),
+            )->toString(),
         );
     }
 
@@ -64,7 +64,7 @@ class MediaTypeTest extends TestCase
                 $this->expectException(InvalidTopLevelType::class);
                 $this->expectExceptionMessage($topLevel);
 
-                new MediaType($topLevel, $subType);
+                MediaType::from($topLevel, $subType);
             });
     }
 
@@ -149,7 +149,7 @@ class MediaTypeTest extends TestCase
                 $this->expectException(DomainException::class);
                 $this->expectExceptionMessage($type);
 
-                new MediaType('application', $type);
+                MediaType::from('application', $type);
             });
     }
 
@@ -163,7 +163,7 @@ class MediaTypeTest extends TestCase
             )
             ->prove(function($suffix) {
                 try {
-                    new MediaType('application', 'json', $suffix);
+                    MediaType::from('application', 'json', $suffix);
                     $this->fail('it should throw');
                 } catch (DomainException $e) {
                     $this->assertSame($suffix, $e->getMessage());

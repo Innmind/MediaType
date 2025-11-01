@@ -28,7 +28,7 @@ final class MediaType
         return Set::compose(
             static function($topLevel, $subType, $suffix, $parameterName, $parameterValue): Model {
                 if ($parameterName) {
-                    return new Model(
+                    return Model::from(
                         $topLevel,
                         $subType,
                         $suffix,
@@ -39,7 +39,7 @@ final class MediaType
                     );
                 }
 
-                return new Model(
+                return Model::from(
                     $topLevel,
                     $subType,
                     $suffix,

@@ -31,7 +31,7 @@ final class MediaType
     /**
      * @no-named-arguments
      */
-    public function __construct(
+    private function __construct(
         string $topLevel,
         string $subType,
         string $suffix = '',
@@ -56,6 +56,19 @@ final class MediaType
         $this->subType = $subType;
         $this->suffix = $suffix;
         $this->parameters = Sequence::of(...$parameters);
+    }
+
+    /**
+     * @psalm-pure
+     * @no-named-arguments
+     */
+    public static function from(
+        string $topLevel,
+        string $subType,
+        string $suffix = '',
+        Parameter ...$parameters,
+    ): self {
+        return new self($topLevel, $subType, $suffix, ...$parameters);
     }
 
     /**
