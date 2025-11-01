@@ -5,6 +5,7 @@
 ### Changed
 
 - `Innmind\MediaType\MediaType` constructor is now private, use `::from()` instead
+- `Innmind\MediaType\Parameter` constructor is now private, use `::from()` instead
 
 ## 2.2.0 - 2023-09-16
 

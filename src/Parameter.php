@@ -22,7 +22,7 @@ final class Parameter
     private string $name;
     private string $value;
 
-    public function __construct(string $name, string $value)
+    private function __construct(string $name, string $value)
     {
         $format = self::NAME;
 
@@ -32,6 +32,14 @@ final class Parameter
 
         $this->name = $name;
         $this->value = $value;
+    }
+
+    /**
+     * @psalm-pure
+     */
+    public static function from(string $name, string $value): self
+    {
+        return new self($name, $value);
     }
 
     /**

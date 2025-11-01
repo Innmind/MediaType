@@ -26,7 +26,7 @@ class MediaTypeTest extends TestCase
             'application',
             'json',
             'whatever',
-            $parameter = new Parameter('charset', 'UTF-8'),
+            $parameter = Parameter::from('charset', 'UTF-8'),
         );
 
         $this->assertTrue($mediaType->parameters()->equals(Sequence::of($parameter)));

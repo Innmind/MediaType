@@ -25,7 +25,7 @@ class ParameterTest extends TestCase
                 Set::strings(),
             )
             ->prove(function($name, $value) {
-                $parameter = new Parameter($name, $value);
+                $parameter = Parameter::from($name, $value);
 
                 $this->assertSame($name, $parameter->name());
                 $this->assertSame($value, $parameter->value());
@@ -44,7 +44,7 @@ class ParameterTest extends TestCase
                 $this->expectException(DomainException::class);
                 $this->expectExceptionMessage($name);
 
-                new Parameter($name, $value);
+                Parameter::from($name, $value);
             });
     }
 

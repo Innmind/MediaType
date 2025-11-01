@@ -32,7 +32,7 @@ final class MediaType
                         $topLevel,
                         $subType,
                         $suffix,
-                        new Parameter(
+                        Parameter::from(
                             $parameterName,
                             $parameterValue,
                         ),
