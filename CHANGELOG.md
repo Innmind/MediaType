@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- `Innmind\MediaType\MediaType::attempt()`
+
 ### Changed
 
 - Require PHP `8.4`

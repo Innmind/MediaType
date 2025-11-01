@@ -8,6 +8,7 @@ use Innmind\MediaType\Exception\{
     DomainException,
 };
 use Innmind\Immutable\{
+    Attempt,
     Sequence,
     Set,
     Str,
@@ -77,10 +78,7 @@ final class MediaType
      */
     public static function of(string $string): self
     {
-        return self::maybe($string)->match(
-            static fn($self) => $self,
-            static fn() => throw new DomainException($string),
-        );
+        return self::attempt($string)->unwrap();
     }
 
     /**
@@ -103,6 +101,18 @@ final class MediaType
                     ),
                 ),
             );
+    }
+
+    /**
+     * @psalm-pure
+     *
+     * @return Attempt<self>
+     */
+    public static function attempt(string $string): Attempt
+    {
+        return self::maybe($string)->attempt(
+            static fn() => throw new DomainException($string),
+        );
     }
 
     /**
