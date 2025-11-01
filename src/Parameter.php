@@ -3,7 +3,6 @@ declare(strict_types = 1);
 
 namespace Innmind\MediaType;
 
-use Innmind\MediaType\Exception\DomainException;
 use Innmind\Immutable\{
     Str,
     Maybe,
@@ -27,7 +26,7 @@ final class Parameter
         $format = self::NAME;
 
         if (!Str::of($name)->matches("~^$format$~")) {
-            throw new DomainException($name);
+            throw new \DomainException($name);
         }
 
         $this->name = $name;

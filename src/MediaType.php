@@ -3,9 +3,6 @@ declare(strict_types = 1);
 
 namespace Innmind\MediaType;
 
-use Innmind\MediaType\Exception\{
-    DomainException,
-};
 use Innmind\Immutable\{
     Attempt,
     Sequence,
@@ -40,11 +37,11 @@ final class MediaType
         $regex = "~^$format$~";
 
         if (!Str::of($subType)->matches($regex)) {
-            throw new DomainException($subType);
+            throw new \DomainException($subType);
         }
 
         if ($suffix !== '' && !Str::of($suffix)->matches($regex)) {
-            throw new DomainException($suffix);
+            throw new \DomainException($suffix);
         }
 
         $this->topLevel = $topLevel;
@@ -68,7 +65,8 @@ final class MediaType
 
     /**
      * @psalm-pure
-     * @throws DomainException
+     *
+     * @throws \DomainException
      */
     public static function of(string $string): self
     {
@@ -105,7 +103,7 @@ final class MediaType
     public static function attempt(string $string): Attempt
     {
         return self::maybe($string)->attempt(
-            static fn() => throw new DomainException($string),
+            static fn() => throw new \DomainException($string),
         );
     }
 

@@ -16,6 +16,8 @@
 ### Removed
 
 - `Innmind\MediaType\Exception\InvalidTopLevelType`
+- `Innmind\MediaType\Exception\Exception`
+- `Innmind\MediaType\Exception\DomainException`
 
 ## 2.2.0 - 2023-09-16
 

@@ -3,10 +3,7 @@ declare(strict_types = 1);
 
 namespace Tests\Innmind\MediaType;
 
-use Innmind\MediaType\{
-    Parameter,
-    Exception\DomainException,
-};
+use Innmind\MediaType\Parameter;
 use Innmind\BlackBox\{
     PHPUnit\Framework\TestCase,
     PHPUnit\BlackBox,
@@ -41,7 +38,7 @@ class ParameterTest extends TestCase
                 Set::strings(),
             )
             ->prove(function($name, $value) {
-                $this->expectException(DomainException::class);
+                $this->expectException(\DomainException::class);
                 $this->expectExceptionMessage($name);
 
                 Parameter::from($name, $value);

@@ -7,7 +7,6 @@ use Innmind\MediaType\{
     MediaType,
     Parameter,
     TopLevel,
-    Exception\DomainException,
 };
 use Innmind\Immutable\Sequence;
 use Innmind\BlackBox\{
@@ -131,7 +130,7 @@ class MediaTypeTest extends TestCase
                 Set::strings()->exclude(static fn($type) => (bool) \preg_match('~^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$~', $type)),
             )
             ->prove(function($type) {
-                $this->expectException(DomainException::class);
+                $this->expectException(\DomainException::class);
                 $this->expectExceptionMessage($type);
 
                 MediaType::from(TopLevel::application, $type);
@@ -150,7 +149,7 @@ class MediaTypeTest extends TestCase
                 try {
                     MediaType::from(TopLevel::application, 'json', $suffix);
                     $this->fail('it should throw');
-                } catch (DomainException $e) {
+                } catch (\DomainException $e) {
                     $this->assertSame($suffix, $e->getMessage());
                 }
             });
