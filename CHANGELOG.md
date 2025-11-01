@@ -4,6 +4,7 @@
 
 ### Changed
 
+- Require PHP `8.4`
 - `Innmind\MediaType\MediaType` constructor is now private, use `::from()` instead
 - `Innmind\MediaType\Parameter` constructor is now private, use `::from()` instead
 
