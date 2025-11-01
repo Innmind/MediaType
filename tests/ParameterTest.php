@@ -7,8 +7,8 @@ use Innmind\MediaType\{
     Parameter,
     Exception\DomainException,
 };
-use PHPUnit\Framework\TestCase;
 use Innmind\BlackBox\{
+    PHPUnit\Framework\TestCase,
     PHPUnit\BlackBox,
     Set,
 };
@@ -17,14 +17,14 @@ class ParameterTest extends TestCase
 {
     use BlackBox;
 
-    public function testInterface()
+    public function testInterface(): BlackBox\Proof
     {
-        $this
+        return $this
             ->forAll(
-                Set\Strings::any()->filter(static fn($name) => (bool) \preg_match('~^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$~', $name)),
-                Set\Strings::any(),
+                Set::strings()->filter(static fn($name) => (bool) \preg_match('~^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$~', $name)),
+                Set::strings(),
             )
-            ->then(function($name, $value) {
+            ->prove(function($name, $value) {
                 $parameter = new Parameter($name, $value);
 
                 $this->assertSame($name, $parameter->name());
@@ -33,14 +33,14 @@ class ParameterTest extends TestCase
             });
     }
 
-    public function testThrowWhenNameInvalid()
+    public function testThrowWhenNameInvalid(): BlackBox\Proof
     {
-        $this
+        return $this
             ->forAll(
-                Set\Strings::any()->filter(static fn($name) => !(bool) \preg_match('~^[\w\-.]+$~', $name)),
-                Set\Strings::any(),
+                Set::strings()->exclude(static fn($name) => (bool) \preg_match('~^[\w\-.]+$~', $name)),
+                Set::strings(),
             )
-            ->then(function($name, $value) {
+            ->prove(function($name, $value) {
                 $this->expectException(DomainException::class);
                 $this->expectExceptionMessage($name);
 
@@ -48,24 +48,26 @@ class ParameterTest extends TestCase
             });
     }
 
-    public function testAcceptValueContainedInDoubleQuotes()
+    public function testAcceptValueContainedInDoubleQuotes(): BlackBox\Proof
     {
-        $this
+        return $this
             ->forAll(
-                Set\Composite::immutable(
+                Set::compose(
                     static fn($first, $rest) => $first.$rest,
-                    Set\Chars::alphanumerical(),
-                    Set\Strings::madeOf(
-                        Set\Chars::alphanumerical(),
-                        Set\Elements::of('!', '#', '$', '&', '^', '_', '.', '-'),
-                    )->between(0, 125),
+                    Set::strings()->chars()->alphanumerical(),
+                    Set::strings()
+                        ->madeOf(
+                            Set\Chars::alphanumerical(),
+                            Set::of('!', '#', '$', '&', '^', '_', '.', '-'),
+                        )
+                        ->between(0, 125),
                 ),
-                Set\Strings::madeOf(
-                    Set\Chars::alphanumerical(),
-                    Set\Elements::of('!', '#', '$', '&', '^', '_', '.', '-', "'", '*', '+', '`', '|', '~'),
+                Set::strings()->madeOf(
+                    Set::strings()->chars()->alphanumerical(),
+                    Set::of('!', '#', '$', '&', '^', '_', '.', '-', "'", '*', '+', '`', '|', '~'),
                 ),
             )
-            ->then(function($name, $value) {
+            ->prove(function($name, $value) {
                 $parameter = Parameter::of(\sprintf(
                     '%s="%s"',
                     $name,

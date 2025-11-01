@@ -5,8 +5,8 @@ namespace Tests\Innmind\MediaType\Fixtures;
 
 use Fixtures\Innmind\MediaType\MediaType;
 use Innmind\MediaType\MediaType as Model;
-use PHPUnit\Framework\TestCase;
 use Innmind\BlackBox\{
+    PHPUnit\Framework\TestCase,
     PHPUnit\BlackBox,
     Set,
     Random,
@@ -24,16 +24,16 @@ class MediaTypeTest extends TestCase
 
         foreach ($set->values(Random::default) as $value) {
             $this->assertInstanceOf(Set\Value::class, $value);
-            $this->assertTrue($value->isImmutable());
+            $this->assertTrue($value->immutable());
             $this->assertInstanceOf(Model::class, $value->unwrap());
         }
     }
 
-    public function testAllGeneratedMediaTypesAreParseable()
+    public function testAllGeneratedMediaTypesAreParseable(): BlackBox\Proof
     {
-        $this
+        return $this
             ->forAll(MediaType::any())
-            ->then(function($mediaType) {
+            ->prove(function($mediaType) {
                 $this->assertSame(
                     $mediaType->toString(),
                     Model::of($mediaType->toString())->toString(),
