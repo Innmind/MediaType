@@ -19,6 +19,12 @@
 - `Innmind\MediaType\Exception\Exception`
 - `Innmind\MediaType\Exception\DomainException`
 
+## 2.3.0 - 2025-03-20
+
+### Added
+
+- Support for `innmind/black-box` `6`
+
 ## 2.2.0 - 2023-09-16
 
 ### Added
