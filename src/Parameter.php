@@ -36,6 +36,7 @@ final class Parameter
     /**
      * @psalm-pure
      */
+    #[\NoDiscard]
     public static function from(string $name, string $value): self
     {
         return new self($name, $value);
@@ -46,6 +47,7 @@ final class Parameter
      *
      * @return Maybe<self>
      */
+    #[\NoDiscard]
     public static function of(string $string): Maybe
     {
         $name = self::NAME;
@@ -57,16 +59,19 @@ final class Parameter
         );
     }
 
+    #[\NoDiscard]
     public function name(): string
     {
         return $this->name;
     }
 
+    #[\NoDiscard]
     public function value(): string
     {
         return $this->value;
     }
 
+    #[\NoDiscard]
     public function toString(): string
     {
         return \sprintf(

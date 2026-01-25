@@ -31,6 +31,7 @@ final class MediaType
      * @psalm-pure
      * @no-named-arguments
      */
+    #[\NoDiscard]
     public static function from(
         TopLevel $topLevel,
         string $subType,
@@ -61,6 +62,7 @@ final class MediaType
      *
      * @throws \DomainException
      */
+    #[\NoDiscard]
     public static function of(string $string): self
     {
         return self::attempt($string)->unwrap();
@@ -71,6 +73,7 @@ final class MediaType
      *
      * @return Maybe<self>
      */
+    #[\NoDiscard]
     public static function maybe(string $string): Maybe
     {
         return Maybe::just(Str::of($string))
@@ -98,6 +101,7 @@ final class MediaType
      *
      * @return Attempt<self>
      */
+    #[\NoDiscard]
     public static function attempt(string $string): Attempt
     {
         return self::maybe($string)->attempt(
@@ -108,6 +112,7 @@ final class MediaType
     /**
      * @psalm-pure
      */
+    #[\NoDiscard]
     public static function null(): self
     {
         return new self(
@@ -118,16 +123,19 @@ final class MediaType
         );
     }
 
+    #[\NoDiscard]
     public function topLevel(): TopLevel
     {
         return $this->topLevel;
     }
 
+    #[\NoDiscard]
     public function subType(): string
     {
         return $this->subType;
     }
 
+    #[\NoDiscard]
     public function suffix(): string
     {
         return $this->suffix;
@@ -136,11 +144,13 @@ final class MediaType
     /**
      * @return Sequence<Parameter>
      */
+    #[\NoDiscard]
     public function parameters(): Sequence
     {
         return $this->parameters;
     }
 
+    #[\NoDiscard]
     public function toString(): string
     {
         $parameters = $this
