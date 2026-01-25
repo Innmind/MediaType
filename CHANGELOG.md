@@ -1,5 +1,24 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- `Innmind\MediaType\MediaType::attempt()`
+
+### Changed
+
+- Require PHP `8.4`
+- `Innmind\MediaType\MediaType` constructor is now private, use `::from()` instead
+- `Innmind\MediaType\Parameter` constructor is now private, use `::from()` instead
+- `Innmind\MediaType\MediaType` top level is now represented by `Innmind\MediaType\TopLevel`
+
+### Removed
+
+- `Innmind\MediaType\Exception\InvalidTopLevelType`
+- `Innmind\MediaType\Exception\Exception`
+- `Innmind\MediaType\Exception\DomainException`
+
 ## 2.3.0 - 2025-03-20
 
 ### Added
