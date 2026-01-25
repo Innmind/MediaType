@@ -41,7 +41,7 @@ class ParameterTest extends TestCase
                 $this->expectException(\DomainException::class);
                 $this->expectExceptionMessage($name);
 
-                Parameter::from($name, $value);
+                $_ = Parameter::from($name, $value);
             });
     }
 

@@ -133,7 +133,7 @@ class MediaTypeTest extends TestCase
                 $this->expectException(\DomainException::class);
                 $this->expectExceptionMessage($type);
 
-                MediaType::from(TopLevel::application, $type);
+                $_ = MediaType::from(TopLevel::application, $type);
             });
     }
 
@@ -147,7 +147,7 @@ class MediaTypeTest extends TestCase
             )
             ->prove(function($suffix) {
                 try {
-                    MediaType::from(TopLevel::application, 'json', $suffix);
+                    $_ = MediaType::from(TopLevel::application, 'json', $suffix);
                     $this->fail('it should throw');
                 } catch (\DomainException $e) {
                     $this->assertSame($suffix, $e->getMessage());
