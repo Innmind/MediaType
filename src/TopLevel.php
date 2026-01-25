@@ -26,6 +26,7 @@ enum TopLevel
      *
      * @return Maybe<self>
      */
+    #[\NoDiscard]
     public static function maybe(string $value): Maybe
     {
         return Maybe::of(match ($value) {
