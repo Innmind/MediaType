@@ -3,7 +3,6 @@ declare(strict_types = 1);
 
 namespace Innmind\MediaType;
 
-use Innmind\MediaType\Exception\DomainException;
 use Innmind\Immutable\{
     Str,
     Maybe,
@@ -22,12 +21,12 @@ final class Parameter
     private string $name;
     private string $value;
 
-    public function __construct(string $name, string $value)
+    private function __construct(string $name, string $value)
     {
         $format = self::NAME;
 
         if (!Str::of($name)->matches("~^$format$~")) {
-            throw new DomainException($name);
+            throw new \DomainException($name);
         }
 
         $this->name = $name;
@@ -36,9 +35,19 @@ final class Parameter
 
     /**
      * @psalm-pure
+     */
+    #[\NoDiscard]
+    public static function from(string $name, string $value): self
+    {
+        return new self($name, $value);
+    }
+
+    /**
+     * @psalm-pure
      *
      * @return Maybe<self>
      */
+    #[\NoDiscard]
     public static function of(string $string): Maybe
     {
         $name = self::NAME;
@@ -50,16 +59,19 @@ final class Parameter
         );
     }
 
+    #[\NoDiscard]
     public function name(): string
     {
         return $this->name;
     }
 
+    #[\NoDiscard]
     public function value(): string
     {
         return $this->value;
     }
 
+    #[\NoDiscard]
     public function toString(): string
     {
         return \sprintf(

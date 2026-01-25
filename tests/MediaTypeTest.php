@@ -6,12 +6,11 @@ namespace Tests\Innmind\MediaType;
 use Innmind\MediaType\{
     MediaType,
     Parameter,
-    Exception\InvalidTopLevelType,
-    Exception\DomainException,
+    TopLevel,
 };
 use Innmind\Immutable\Sequence;
-use PHPUnit\Framework\TestCase;
 use Innmind\BlackBox\{
+    PHPUnit\Framework\TestCase,
     PHPUnit\BlackBox,
     Set,
 };
@@ -22,15 +21,15 @@ class MediaTypeTest extends TestCase
 
     public function testInterface()
     {
-        $mediaType = new MediaType(
-            'application',
+        $mediaType = MediaType::from(
+            TopLevel::application,
             'json',
             'whatever',
-            $parameter = new Parameter('charset', 'UTF-8'),
+            $parameter = Parameter::from('charset', 'UTF-8'),
         );
 
         $this->assertTrue($mediaType->parameters()->equals(Sequence::of($parameter)));
-        $this->assertSame('application', $mediaType->topLevel());
+        $this->assertSame(TopLevel::application, $mediaType->topLevel());
         $this->assertSame('json', $mediaType->subType());
         $this->assertSame('whatever', $mediaType->suffix());
         $this->assertSame('application/json+whatever; charset=UTF-8', $mediaType->toString());
@@ -46,26 +45,11 @@ class MediaTypeTest extends TestCase
     {
         $this->assertSame(
             'application/json',
-            (new MediaType(
-                'application',
+            MediaType::from(
+                TopLevel::application,
                 'json',
-            ))->toString(),
+            )->toString(),
         );
-    }
-
-    public function testThrowWhenTheTopLevelIsInvalid()
-    {
-        $this
-            ->forAll(
-                Set\Strings::any()->filter(static fn($string) => !MediaType::topLevels()->contains($string)),
-                Set\Strings::any(),
-            )
-            ->then(function($topLevel, $subType) {
-                $this->expectException(InvalidTopLevelType::class);
-                $this->expectExceptionMessage($topLevel);
-
-                new MediaType($topLevel, $subType);
-            });
     }
 
     public function testMaybe()
@@ -78,7 +62,7 @@ class MediaTypeTest extends TestCase
         );
 
         $this->assertInstanceOf(MediaType::class, $mediaType);
-        $this->assertSame('application', $mediaType->topLevel());
+        $this->assertSame(TopLevel::application, $mediaType->topLevel());
         $this->assertSame('tree.octet-stream', $mediaType->subType());
         $this->assertSame('suffix', $mediaType->suffix());
         $this->assertSame(3, $mediaType->parameters()->size());
@@ -105,7 +89,7 @@ class MediaTypeTest extends TestCase
         );
 
         $this->assertInstanceOf(MediaType::class, $mediaType);
-        $this->assertSame('application', $mediaType->topLevel());
+        $this->assertSame(TopLevel::application, $mediaType->topLevel());
         $this->assertSame('octet-stream', $mediaType->subType());
         $this->assertSame(1, $mediaType->parameters()->size());
         $parameters = $mediaType->parameters()->toList();
@@ -113,11 +97,11 @@ class MediaTypeTest extends TestCase
         $this->assertSame('UTF-8', $parameters[0]->value());
     }
 
-    public function testReturnNothingWhenInvalidMediaTypeString()
+    public function testReturnNothingWhenInvalidMediaTypeString(): BlackBox\Proof
     {
-        $this
-            ->forAll(Set\Strings::any())
-            ->then(function($string) {
+        return $this
+            ->forAll(Set::strings())
+            ->prove(function($string) {
                 // this may optimistically generate a valid media type string at
                 // some point but generally any random string is invalid
                 $this->assertNull(
@@ -139,31 +123,33 @@ class MediaTypeTest extends TestCase
         );
     }
 
-    public function testThrowWhenSubTypeInvalid()
+    public function testThrowWhenSubTypeInvalid(): BlackBox\Proof
     {
-        $this
+        return $this
             ->forAll(
-                Set\Strings::any()->filter(static fn($type) => !(bool) \preg_match('~^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$~', $type)),
+                Set::strings()->exclude(static fn($type) => (bool) \preg_match('~^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$~', $type)),
             )
-            ->then(function($type) {
-                $this->expectException(DomainException::class);
+            ->prove(function($type) {
+                $this->expectException(\DomainException::class);
                 $this->expectExceptionMessage($type);
 
-                new MediaType('application', $type);
+                MediaType::from(TopLevel::application, $type);
             });
     }
 
-    public function testThrowWhenSuffixInvalid()
+    public function testThrowWhenSuffixInvalid(): BlackBox\Proof
     {
-        $this
+        return $this
             ->forAll(
-                Set\Strings::atLeast(1)->filter(static fn($suffix) => !(bool) \preg_match('~^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$~', $suffix)),
+                Set::strings()
+                    ->atLeast(1)
+                    ->exclude(static fn($suffix) => (bool) \preg_match('~^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$~', $suffix)),
             )
-            ->then(function($suffix) {
+            ->prove(function($suffix) {
                 try {
-                    new MediaType('application', 'json', $suffix);
+                    MediaType::from(TopLevel::application, 'json', $suffix);
                     $this->fail('it should throw');
-                } catch (DomainException $e) {
+                } catch (\DomainException $e) {
                     $this->assertSame($suffix, $e->getMessage());
                 }
             });

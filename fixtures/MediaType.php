@@ -6,60 +6,59 @@ namespace Fixtures\Innmind\MediaType;
 use Innmind\MediaType\{
     MediaType as Model,
     Parameter,
+    TopLevel,
 };
 use Innmind\BlackBox\Set;
 
 final class MediaType
 {
     /**
-     * @return Set<Model>
+     * @return Set\Provider<Model>
      */
-    public static function any(): Set
+    public static function any(): Set\Provider
     {
         $alphaNumerical = [...\range('A', 'Z'), ...\range('a', 'z'), ...\range(0, 9)];
-        $validChars = Set\Composite::immutable(
+        $validChars = Set::compose(
             static fn($first, array $rest): string => \implode('', [$first, ...$rest]),
-            Set\Elements::of(...$alphaNumerical),
-            Set\Sequence::of(
-                Set\Elements::of('!', '#', '$', '&', '^', '_', '.', '-', ...$alphaNumerical),
-                Set\Integers::between(0, 126),
-            ),
+            Set::of(...$alphaNumerical),
+            Set::sequence(
+                Set::of('!', '#', '$', '&', '^', '_', '.', '-', ...$alphaNumerical),
+            )->between(0, 126),
         );
 
-        return Set\Composite::immutable(
+        return Set::compose(
             static function($topLevel, $subType, $suffix, $parameterName, $parameterValue): Model {
                 if ($parameterName) {
-                    return new Model(
+                    return Model::from(
                         $topLevel,
                         $subType,
                         $suffix,
-                        new Parameter(
+                        Parameter::from(
                             $parameterName,
                             $parameterValue,
                         ),
                     );
                 }
 
-                return new Model(
+                return Model::from(
                     $topLevel,
                     $subType,
                     $suffix,
                 );
             },
-            Set\Elements::of(...Model::topLevels()->toList()),
+            Set::of(...TopLevel::cases()),
             $validChars,
-            Set\Either::any(
-                Set\Elements::of(''),
+            Set::either(
+                Set::of(''),
                 $validChars,
             ),
-            Set\Either::any(
-                $validChars,
-                Set\Elements::of(null), // to generate a type without a parameter
-            ),
-            Set\Strings::madeOf(
-                Set\Chars::alphanumerical(),
-                Set\Elements::of('-', '.'),
-            )->between(1, 100),
+            $validChars->nullable(), // to generate a type without a parameter
+            Set::strings()
+                ->madeOf(
+                    Set::strings()->chars()->alphanumerical(),
+                    Set::of('-', '.'),
+                )
+                ->between(1, 100),
         );
     }
 }
