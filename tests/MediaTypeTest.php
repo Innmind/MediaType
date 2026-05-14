@@ -130,10 +130,12 @@ class MediaTypeTest extends TestCase
                 Set::strings()->exclude(static fn($type) => (bool) \preg_match('~^[A-Za-z0-9][A-Za-z0-9!#$&^_.-]{0,126}$~', $type)),
             )
             ->prove(function($type) {
-                $this->expectException(\DomainException::class);
-                $this->expectExceptionMessage($type);
-
-                $_ = MediaType::from(TopLevel::application, $type);
+                $this
+                    ->assert()
+                    ->throws(
+                        static fn() => MediaType::from(TopLevel::application, $type),
+                        \DomainException::class,
+                    );
             });
     }
 

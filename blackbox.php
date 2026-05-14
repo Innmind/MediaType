@@ -23,8 +23,7 @@ Application::new($argv)
                     __DIR__.'/src/',
                     __DIR__.'/tests/',
                 )
-                    ->dumpTo('coverage.clover')
-                    ->enableWhen(true),
+                    ->dumpTo('coverage.clover'),
             ),
     )
     ->tryToProve(Load::directory(__DIR__.'/tests/'))

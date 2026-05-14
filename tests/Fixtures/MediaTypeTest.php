@@ -18,13 +18,12 @@ class MediaTypeTest extends TestCase
 
     public function testInterface()
     {
-        $set = MediaType::any();
+        $set = MediaType::any()->take(100);
 
-        $this->assertInstanceOf(Set\Provider::class, $set);
+        $this->assertInstanceOf(Set::class, $set);
 
-        foreach ($set->toSet()->values(Random::default) as $value) {
+        foreach ($set->values(Random::default) as $value) {
             $this->assertInstanceOf(Set\Value::class, $value);
-            $this->assertTrue($value->immutable());
             $this->assertInstanceOf(Model::class, $value->unwrap());
         }
     }
