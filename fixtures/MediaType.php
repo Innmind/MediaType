@@ -13,9 +13,9 @@ use Innmind\BlackBox\Set;
 final class MediaType
 {
     /**
-     * @return Set\Provider<Model>
+     * @return Set<Model>
      */
-    public static function any(): Set\Provider
+    public static function any(): Set
     {
         $alphaNumerical = [...\range('A', 'Z'), ...\range('a', 'z'), ...\range(0, 9)];
         $validChars = Set::compose(
