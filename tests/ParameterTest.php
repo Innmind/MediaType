@@ -38,10 +38,12 @@ class ParameterTest extends TestCase
                 Set::strings(),
             )
             ->prove(function($name, $value) {
-                $this->expectException(\DomainException::class);
-                $this->expectExceptionMessage($name);
-
-                Parameter::from($name, $value);
+                $this
+                    ->assert()
+                    ->throws(
+                        static fn() => Parameter::from($name, $value),
+                        \DomainException::class,
+                    );
             });
     }
 
@@ -54,7 +56,7 @@ class ParameterTest extends TestCase
                     Set::strings()->chars()->alphanumerical(),
                     Set::strings()
                         ->madeOf(
-                            Set\Chars::alphanumerical(),
+                            Set::strings()->chars()->alphanumerical(),
                             Set::of('!', '#', '$', '&', '^', '_', '.', '-'),
                         )
                         ->between(0, 125),
