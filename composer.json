@@ -2,7 +2,9 @@
     "name": "innmind/media-type",
     "type": "library",
     "description": "Model of media types",
-    "keywords": ["media type"],
+    "keywords": [
+        "media type"
+    ],
     "homepage": "http://github.com/Innmind/MediaType",
     "license": "MIT",
     "authors": [
